@@ -1,17 +1,24 @@
 package main
 
 import (
-	"fmt"
+	"log"
+	"net"
 
 	"mouloud.com/thor/internal/configs"
+	"mouloud.com/thor/internal/server"
 )
 func main (){
 
+	//Load init config
 	err,config:=configs.NewConfigFromYaml("config.yaml")
 	if err!=nil{
 		panic(err.Error())
 	}
-	fmt.Print("Running server with init configs")
-	fmt.Print(config.String())
+	//Run tcp server
+  if err:=server.RunServer(config.Server.TcpPort,func(conn net.Conn){
+		log.Print("Received new Connection")
+	}) ;err!=nil{
+		panic(err.Error())
+	}
 }
 
