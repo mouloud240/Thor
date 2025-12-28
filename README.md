@@ -62,7 +62,7 @@ pipeline:
   parser workers: 5   # Number of parser workers spawned (default: 5)
 storage:
   log directory: "/var/log/thor"   # logs storage dir inside docker (to be mapped via volumes to your device if needed for backups)
-  segment size mb: 10 # size of single segment file before splitting (default: 50 mb)
+  segment size :5000 # size of single segment file before splitting in kb (default:50000 (50 mb) )
 ```
 
 ## Testing the Pipeline

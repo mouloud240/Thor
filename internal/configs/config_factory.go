@@ -7,6 +7,7 @@ import (
 )
 
 
+//TODO :add defaults
 func  NewConfigFromYaml(path string)(error,*IngestionConfig){
 	out:=IngestionConfig{}
     configFile, err := os.ReadFile(path)
