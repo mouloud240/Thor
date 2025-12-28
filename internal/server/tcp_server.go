@@ -6,11 +6,11 @@ import (
 	"net"
 )
 func RunServer(port int,connHandler func(net.Conn))error{
-	ln,err:=net.Listen("tcpv4",fmt.Sprintf(":%d",port))
+	ln,err:=net.Listen("tcp4",fmt.Sprintf(":%d",port))
 	if err!=nil{
 		return err;
 	}
-	log.Print("Server Running on port",port)
+	log.Print("Server Running on port: ",port)
 	//Accept loop
 	for {
 		conn,err:=ln.Accept()
