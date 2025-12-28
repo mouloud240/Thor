@@ -77,7 +77,7 @@ echo "2024-12-01T10:30:45Z|INFO|api-server|User login successful" | nc localhost
 ## Project Structure
 
 - cmd/server/: Application entry point.
-- internal/configs: Sever Configs
+- internal/configs/: Sever Configs
 - internal/ingestion/: TCP server logic and connection handling.
 - internal/api/: The rest api to query different logs
 - internal/pipeline/: Concurrent worker pool and log parsing.
