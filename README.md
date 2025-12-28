@@ -77,13 +77,13 @@ echo "2024-12-01T10:30:45Z|INFO|api-server|User login successful" | nc localhost
 ## Project Structure
 
 - cmd/server/: Application entry point.
+- internal/configs: Sever Configs
 - internal/ingestion/: TCP server logic and connection handling.
 - internal/api/: The rest api to query different logs
 - internal/pipeline/: Concurrent worker pool and log parsing.
 - internal/storage/: Segmented file I/O and rotation logic.
-- internal/metrics/: Internal state tracking and reporting.
 - Dockerfile: Containerization configuration.
-- docker-compose.yaml: Multi-container orchestration (includes storage volume mapping).
+- docker compose.yaml: Multi-container orchestration (includes storage volume mapping).
 
 ## License
 MIT © 2026 Mouloud Hasrane
