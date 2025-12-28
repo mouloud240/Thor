@@ -16,6 +16,7 @@ func main (){
 	}
 	//Run tcp server
   if err:=server.RunServer(config.Server.TcpPort,func(conn net.Conn){
+		defer conn.Close()
 		log.Print("Received new Connection")
 	}) ;err!=nil{
 		panic(err.Error())
