@@ -9,22 +9,22 @@ This repository is currently under active development, focusing on the Phase 1 i
 ## Why Thor:
 
 Thor is the cooler brother of loki (the famous logging service) , why is it cooler you might say:
-- Bifrost Bridge: Real-time log transformer
+- **Bifrost Bridge:** Real-time log transformer
+- **Heimdall’s Sight:** Smart schema recognition
 ....... This list is still **WIP**
 
 
 ## Key Features (Phase 1 - In Progress)
 
-- Concurrent TCP Ingestion: High-throughput log reception supporting multiple simultaneous client connections.
-- Worker Pool Processing: A dedicated pipeline of parser workers to handle log enrichment and sanitization without blocking the ingestion layer.
-- Segmented Storage: Automatic log rotation and segmented file management to prevent massive file overhead.
-- Graceful Shutdown: Zero-data-loss shutdown sequence that drains all internal buffers before closing.
-- Real-time Metrics: Built-in monitoring of throughput, channel health, and connection counts.
+- **Concurrent TCP Ingestion:** High-throughput log reception supporting multiple simultaneous client connections.
+- **Worker Pool Processing:** A dedicated pipeline of parser workers to handle log enrichment and sanitization without blocking the ingestion layer.
+- **Segmented Storage:** Automatic log rotation and segmented file management to prevent massive file overhead.
+- **Graceful Shutdown:** Zero-data-loss shutdown sequence that drains all internal buffers before closing.
+- **Real-time Metrics:** Built-in monitoring of throughput, channel health, and connection counts.
 
 ## Coming on Phase 2
-- Api to query logs 
-- logs Indexing
--
+- Query language for logs
+- Rest api to interact with logs (read-only)
 ## Architecture
 
 ```
