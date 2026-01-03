@@ -23,7 +23,7 @@ func main (){
 		defer conn.Close()
 	  var req strings.Builder
 
-buff:=make([]byte,64)
+buff:=make([]byte,100)
 read_loop:
 		for {
 		n,err:=conn.Read(buff)
