@@ -1,5 +1,5 @@
 server:
-  tcp_port: 8080   # Ingestion Port
+  tcp_port: 9000  # Ingestion Port
 pipeline:
   parser_workers: 5   # Number of parser workers spawned (default: 5)
 storage:
