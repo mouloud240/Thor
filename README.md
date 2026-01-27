@@ -1,5 +1,6 @@
+![logo.png](./thor.png)
 # Thor: High-Performance Log Aggregator
-                                [logo](./thor.png)
+
 
 Thor is a high-performance log aggregation system designed for scalability, reliability, and real-time analytics.
 
