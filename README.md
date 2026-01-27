@@ -1,4 +1,5 @@
 # Thor: High-Performance Log Aggregator
+                                [logo](./thor.png)
 
 Thor is a high-performance log aggregation system designed for scalability, reliability, and real-time analytics.
 
@@ -23,6 +24,7 @@ Thor is the cooler brother of loki (the famous logging service) , why is it cool
 - **Real-time Metrics:** Built-in monitoring of throughput, channel health, and connection counts.
 
 ## Coming on Phase 2
+- Adding Context Support (using messagePack)
 - Query language for logs
 - Rest api to interact with logs (read-only)
 ## Architecture

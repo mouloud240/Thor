@@ -5,10 +5,9 @@ import (
 	"io"
 	"log"
 	"net"
-
 	"mouloud.com/thor/internal/configs"
 	"mouloud.com/thor/internal/pipeline"
-	"mouloud.com/thor/internal/server"
+	"mouloud.com/thor/internal/ingestion"
 )
 func main (){
 
@@ -18,11 +17,10 @@ func main (){
 		panic(err.Error())
 	}
 	//Run tcp server
-  if err:=server.RunServer(config.Server.TcpPort,func(conn net.Conn,ch chan<- error){
+  if err:=ingestion.RunServer(config.Server.TcpPort,func(conn net.Conn,ch chan<- error){
 		//This is just a test hardcoded function until the time comes to start working on the ingestion pipeline besides parsing
 		defer conn.Close()
 	  var req strings.Builder
-
 buff:=make([]byte,100)
 read_loop:
 		for {
@@ -42,7 +40,6 @@ read_loop:
 				//Just a test for logs and concurrency
 		logEntry,err:=pipeline.FromString(req.String())
 		if err!=nil{
-			// It is fine if it panics sine it is on the same go routine
 			ch<-err
 			return
 		}
