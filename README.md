@@ -1,4 +1,3 @@
-![logo.png](./thor.png)
 # Thor: High-Performance Log Aggregator
 
 
