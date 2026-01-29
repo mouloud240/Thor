@@ -36,7 +36,6 @@ func LevelFromString(raw string) ( error,LogLevel ){
 		return errors.New("Unsupported Log Level"),NONE
 	 }
 }
-
 type Log struct{
 	Level LogLevel
   TimeStamp time.Time

@@ -2,7 +2,9 @@ package main
 
 import (
 	"bufio"
+	"context"
 	"net"
+
 	"mouloud.com/thor/internal/configs"
 	"mouloud.com/thor/internal/ingestion"
 	"mouloud.com/thor/internal/ingestion/client"
@@ -15,7 +17,8 @@ func main (){
 	}
 	//Run tcp server
   if err:=ingestion.RunServer(config.Server.TcpPort,config,
-	func(conn net.Conn,workChan chan<- client.Client,errChan <-chan error ){
+	func(conn net.Conn,workChan chan<- client.Client,errChan <-chan error,ctx context.Context){
+	
 defer conn.Close()
 // Create Response Channel
 res:=make(chan string)
@@ -27,6 +30,7 @@ if scanner.Scan() {
     workChan <- *client
 }
 if err := scanner.Err(); err != nil {
+
 	conn.Write([]byte(err.Error()))
 	return;
 }
@@ -41,6 +45,9 @@ for {
 		return
 	case err:=<-errChan:
 		conn.Write([]byte(err.Error()))
+		return
+	case <-ctx.Done():
+		//Close connection after timeout
 		return
 	}
 }
