@@ -4,12 +4,21 @@ import (
 	"fmt"
 	"log"
 	"net"
+
+	"mouloud.com/thor/internal/configs"
+	"mouloud.com/thor/internal/ingestion/client"
+	"mouloud.com/thor/internal/pipeline"
 )
-func RunServer(port int,connHandler func(net.Conn,chan <-error))error{
+func RunServer(port int,config *configs.IngestionConfig,connHandler func(net.Conn,chan<- client.Client, <-chan error))error{
+	
+	pipeLine:=pipeline.NewPipeLine(config.Storage.LogDir,config.Storage.SegmentSize,config.Pipeline.NumWorkers)
+  ch,errCh,err:=pipeLine.StartWorkers()
+	if err!=nil{
+		return err
+	}
+
 	//Error channel 
 	//the number of bounding is hardcoded rn until some more iterations
-	errChan:=make(chan(error),5)
-	defer close(errChan)
 	ln,err:=net.Listen("tcp4",fmt.Sprintf(":%d",port))
 	if err!=nil{
 		return err;
@@ -23,13 +32,6 @@ func RunServer(port int,connHandler func(net.Conn,chan <-error))error{
 		}
 		//Current setups spins go routine for each connection , later this will be converted into a bounded worker pool pattern if need be
 		log.Print("Established new connection" ,conn.LocalAddr())
-		go connHandler(conn,errChan)
-		go func(){
-			for err :=range errChan{
-			conn.Close()
-			//Add better alert system later
-			log.Fatal(err.Error())
-		}
-	}()
+		go connHandler(conn,ch,errCh)
 	}
 }

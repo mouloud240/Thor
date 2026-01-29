@@ -2,11 +2,10 @@ package main
 
 import (
 	"bufio"
-	"log"
 	"net"
 	"mouloud.com/thor/internal/configs"
 	"mouloud.com/thor/internal/ingestion"
-	"mouloud.com/thor/internal/pipeline"
+	"mouloud.com/thor/internal/ingestion/client"
 )
 func main (){
 	//Load init config
@@ -15,35 +14,41 @@ func main (){
 		panic(err.Error())
 	}
 	//Run tcp server
-  if err:=ingestion.RunServer(config.Server.TcpPort,func(conn net.Conn,ch chan<- error){
-	  pipeLine:=pipeline.NewPipeLine(config.Storage.LogDir,config.Storage.SegmentSize,config.Pipeline.NumWorkers)
-		workChan,errChan,err:=pipeLine.StartWorkers()
-		if err!=nil{
-			ch<-err
-		}
-		go func (){
-			for err:= range errChan{
-				ch<-err
-			}
-		}()
-		
-		defer conn.Close()
+  if err:=ingestion.RunServer(config.Server.TcpPort,config,
+	func(conn net.Conn,workChan chan<- client.Client,errChan <-chan error ){
+defer conn.Close()
+// Create Response Channel
+res:=make(chan string)
+//Scan request body and start worker 
 scanner := bufio.NewScanner(conn)
 if scanner.Scan() {
     req := scanner.Text()
-    workChan <- req
+		client:=client.NewClient(req,res)
+    workChan <- *client
 }
 if err := scanner.Err(); err != nil {
-    ch <- err
-    return
-}		
+	conn.Write([]byte(err.Error()))
+	return;
+}
 if err!=nil{
-			ch<-err
-			return
+	conn.Write([]byte(err.Error()))
+	return;
 		}
-
-	}) ;err!=nil{
-		log.Fatal(err.Error())
+for {
+	select {
+	case out:=<-res:
+		conn.Write([]byte(out))
+		return
+	case err:=<-errChan:
+		conn.Write([]byte(err.Error()))
+		return
 	}
+}
+	});
+	// Run server Error
+	err!=nil{
+		panic(err.Error())
+	}
+	
 }
 

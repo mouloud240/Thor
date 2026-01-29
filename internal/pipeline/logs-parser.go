@@ -25,7 +25,7 @@ func LevelFromString(raw string) ( error,LogLevel ){
 	 case "INFO":
 		 return nil,INFO
 	case "DEBUG":
-		return nil,DEBUG
+		return nil,NONE
 	case "WARN":
 		return  nil,WARN
 	case "ERROR":
