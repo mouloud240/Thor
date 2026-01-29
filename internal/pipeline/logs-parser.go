@@ -25,7 +25,7 @@ func LevelFromString(raw string) ( error,LogLevel ){
 	 case "INFO":
 		 return nil,INFO
 	case "DEBUG":
-		return nil,NONE
+		return nil,DEBUG
 	case "WARN":
 		return  nil,WARN
 	case "ERROR":
@@ -67,3 +67,6 @@ func  FromString(input string)(*Log,error){
 	return &log,nil
 	}
 
+	func (l *Log)ToString()string{
+		return l.TimeStamp.Format(time.RFC3339)+"|"+l.Level.String()+"|"+l.Service+"|"+l.Message
+	}

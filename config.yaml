@@ -3,5 +3,5 @@ server:
 pipeline:
   parser_workers: 5   # Number of parser workers spawned (default: 5)
 storage:
-  log_directory: "/var/log/thor"   # logs storage dir inside docker (to be mapped via volumes to your device if needed for backups)
+  log_directory: "/home/mouloud/dev/go/Thor/dump/"   # logs storage dir inside docker (to be mapped via volumes to your device if needed for backups)
   segment_size: 10 # size of single segment file before splitting (default: 50 mb)
