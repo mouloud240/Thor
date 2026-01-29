@@ -47,6 +47,9 @@ type Log struct{
 func  FromString(input string)(*Log,error){
 	parts:=strings.Split(input, "|")
 	
+	if (len(parts)<4){
+		return nil,errors.New("Please Provide the correct log format ")
+	}
 	err,logLevel:=LevelFromString(parts[1])
 	if err!=nil{
 		return nil,err

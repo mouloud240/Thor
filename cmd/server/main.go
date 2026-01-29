@@ -1,16 +1,14 @@
 package main
 
 import (
-	"strings"
-	"io"
+	"bufio"
 	"log"
 	"net"
 	"mouloud.com/thor/internal/configs"
-	"mouloud.com/thor/internal/pipeline"
 	"mouloud.com/thor/internal/ingestion"
+	"mouloud.com/thor/internal/pipeline"
 )
 func main (){
-
 	//Load init config
 	err,config:=configs.NewConfigFromYaml("config.yaml")
 	if err!=nil{
@@ -18,32 +16,31 @@ func main (){
 	}
 	//Run tcp server
   if err:=ingestion.RunServer(config.Server.TcpPort,func(conn net.Conn,ch chan<- error){
-		//This is just a test hardcoded function until the time comes to start working on the ingestion pipeline besides parsing
-		defer conn.Close()
-	  var req strings.Builder
-buff:=make([]byte,100)
-read_loop:
-		for {
-		n,err:=conn.Read(buff)
+	  pipeLine:=pipeline.NewPipeLine(config.Storage.LogDir,config.Storage.SegmentSize,config.Pipeline.NumWorkers)
+		workChan,errChan,err:=pipeLine.StartWorkers()
 		if err!=nil{
-			if err==io.EOF {
-				//this is probaly not nessecary but I am paranoid
-				break read_loop
-			}else {
+			ch<-err
+		}
+		go func (){
+			for err:= range errChan{
 				ch<-err
-				//We would love to just return the error but this handler will be run on a seperate go routine more on that in @internal/server/tcp_server.go
-				return
 			}
-		}
-		req.WriteString(string(buff[:n]))
-		}
-				//Just a test for logs and concurrency
-		logEntry,err:=pipeline.FromString(req.String())
-		if err!=nil{
+		}()
+		
+		defer conn.Close()
+scanner := bufio.NewScanner(conn)
+if scanner.Scan() {
+    req := scanner.Text()
+    workChan <- req
+}
+if err := scanner.Err(); err != nil {
+    ch <- err
+    return
+}		
+if err!=nil{
 			ch<-err
 			return
 		}
-		log.Print(logEntry)
 
 	}) ;err!=nil{
 		log.Fatal(err.Error())

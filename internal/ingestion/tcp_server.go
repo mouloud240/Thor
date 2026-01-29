@@ -22,12 +22,14 @@ func RunServer(port int,connHandler func(net.Conn,chan <-error))error{
 			return err
 		}
 		//Current setups spins go routine for each connection , later this will be converted into a bounded worker pool pattern if need be
+		log.Print("Established new connection" ,conn.LocalAddr())
 		go connHandler(conn,errChan)
-		for err :=range errChan{
+		go func(){
+			for err :=range errChan{
+			conn.Close()
 			//Add better alert system later
 			log.Fatal(err.Error())
-
 		}
-		
+	}()
 	}
 }
