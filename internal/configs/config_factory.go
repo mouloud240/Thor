@@ -17,5 +17,6 @@ func  NewConfigFromYaml(path string)(error,*IngestionConfig){
 		if err:=yaml.Unmarshal(configFile,&out);err!=nil {
 		return err,nil;
 	}
+	out.Storage.SegmentSize=out.Storage.SegmentSize*1000 //Convert Kb to bytes
 	return nil,&out;
 }

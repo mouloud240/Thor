@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"context"
+	"log"
 	"net"
 
 	"mouloud.com/thor/internal/configs"
@@ -44,12 +45,10 @@ for {
 		conn.Write([]byte(out))
 		return
 	case err:=<-errChan:
+		log.Fatal(err.Error())
 		conn.Write([]byte(err.Error()))
 		return
-	case <-ctx.Done():
-		//Close connection after timeout
-		return
-	}
+		}
 }
 	});
 	// Run server Error

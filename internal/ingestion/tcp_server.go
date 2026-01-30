@@ -35,7 +35,6 @@ func RunServer(port int,config *configs.IngestionConfig,connHandler func(net.Con
 			return err
 		}
 		//Current setups spins go routine for each connection , later this will be converted into a bounded worker pool pattern if need be
-		log.Print("Established new connection" ,conn.LocalAddr())
 		go connHandler(conn,ch,errCh,ctx)
 	}
 }
