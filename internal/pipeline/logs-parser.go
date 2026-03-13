@@ -70,3 +70,6 @@ func  FromString(input string)(*Log,error){
 	func (l *Log)ToString()string{
 		return l.TimeStamp.Format(time.RFC3339)+"|"+l.Level.String()+"|"+l.Service+"|"+l.Message
 	}
+	func (l *Log)ToStorageFormat()string{
+		return l.ToString()+"\n"
+	}
