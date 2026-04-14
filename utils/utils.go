@@ -1,5 +1,9 @@
 package utils
+
 import (
+	"log"
+	"strconv"
+	"strings"
 	"sync"
 	"time"
 )
@@ -62,3 +66,18 @@ func (d *debouncer) cancel() {
 		d.timer = nil
 	}
 }
+func ExtractMultiRequestParams(req string)(int , bool){
+	if strings.Contains(req,"MULTI"){
+		parts:=strings.Split(req," ")
+		log.Print("Multi command detected with params: ",parts)
+			//Extract the number of requests in the multi command
+			numReqs,err:=strconv.Atoi(parts[1])
+			if err!=nil{
+				log.Print("Error parsing multi command params: ",err)
+				return 0,false
+			}
+			return numReqs,true
+		}
+	
+		return 0,false
+	}

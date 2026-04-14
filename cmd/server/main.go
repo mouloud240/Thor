@@ -9,6 +9,7 @@ import (
 	"mouloud.com/thor/internal/configs"
 	"mouloud.com/thor/internal/ingestion"
 	"mouloud.com/thor/internal/ingestion/client"
+	"mouloud.com/thor/utils"
 )
 
 func main() {
@@ -20,40 +21,64 @@ func main() {
 	//Run tcp server
 	if err := ingestion.RunServer(config.Server.TcpPort, config,
 		func(conn net.Conn, workChan chan<- client.Client, errChan <-chan error, ctx context.Context) {
-
+			_ = ctx
 			defer conn.Close()
-			// Create Response Channel
-			res := make(chan string)
-			// Scan request body and start worker
-			scanner := bufio.NewScanner(conn)
-			if scanner.Scan() {
-				req := scanner.Text()
-				client := client.NewClient(req, res)
-				workChan <- *client
-			}
-			if err := scanner.Err(); err != nil {
 
-				conn.Write([]byte(err.Error()))
-				return
-			}
-			if err != nil {
-				conn.Write([]byte(err.Error()))
-				return
-			}
-			for {
+			scanner := bufio.NewScanner(conn)
+			multiMode := false
+			remaining := 1
+			firstLine := true
+
+			for scanner.Scan() {
+				req := scanner.Text()
+
+				if firstLine {
+					firstLine = false
+					if n, isMulti := utils.ExtractMultiRequestParams(req); isMulti {
+						multiMode = true
+						remaining = n
+						if remaining <= 0 {
+							return
+						}
+						continue
+					}
+				}
+
+				res := make(chan string)
+				c := client.NewClient(req, res)
+				if c == nil {
+					log.Print("Skipping invalid request")
+					continue
+				}
+
+				workChan <- *c
+
 				select {
 				case out := <-res:
-					conn.Write([]byte(out))
-					return
-				case err := <-errChan:
-					log.Fatal(err.Error())
-					conn.Write([]byte(err.Error()))
+					if _, wErr := conn.Write([]byte(out)); wErr != nil {
+						log.Print(wErr.Error())
+						return
+					}
+
+					if multiMode {
+						remaining--
+						if remaining == 0 {
+							return
+						}
+					} else {
+						return
+					}
+				case runErr := <-errChan:
+					log.Print(runErr.Error())
+					conn.Write([]byte(runErr.Error()))
 					return
 				}
 			}
-		});
-	// Run server Error
-	err != nil {
+
+			if scanErr := scanner.Err(); scanErr != nil {
+				conn.Write([]byte(scanErr.Error()))
+			}
+		}); err != nil {
 		panic(err.Error())
 	}
 
