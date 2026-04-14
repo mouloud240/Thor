@@ -3,3 +3,7 @@ run_tcp:
 run_debug:
 	 air
 
+
+load_test:
+	go run ./cmd/load_tester/main.go
+
